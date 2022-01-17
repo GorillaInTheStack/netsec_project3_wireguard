@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 
     base.vm.provider "virtualbox" do |v|
       v.name = "base"
-      v.customize ["modifyvm", :id, "--groups", "/vpn"]
+      v.customize ["modifyvm", :id, "--groups", "/wireguard"]
       v.customize "post-comm", ['guestcontrol', :id, 'run', '--exe',
         '/usr/bin/sudo', '--username', 'vagrant', '--password', 'vagrant',
         '--wait-stdout', '--wait-stderr', '--', 'sudo/arg0', '/bin/mkdir',

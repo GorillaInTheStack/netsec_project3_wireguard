@@ -14,7 +14,10 @@ sudo apt-get -y install dialog debconf-utils apt-utils iputils-ping iptables\
   iputils-tracepath traceroute netcat conntrack nmap wget rsync
 
 # Install IPsec tools
-sudo apt-get -y install strongswan moreutils libstrongswan-extra-plugins
+#sudo apt-get -y install strongswan moreutils libstrongswan-extra-plugins
+
+# Install wireguard
+sudo apt-get -y install wireguard
 
 # Install iptables-persistent
 sudo echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections

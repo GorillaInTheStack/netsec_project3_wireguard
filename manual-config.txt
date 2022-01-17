@@ -1,0 +1,27 @@
+
+### SERVER S1 manual config:
+
+[Interface]
+PrivateKey = uGNoKRX9xDcwrPUMPyKQLCmV5XbY5mcoGO+cJiAbjm8=
+Address = 192.168.1.2
+ListenPort = 51820
+
+[Peer]
+PublicKey = 2qZwf8iTVTR9at136MUfPpMv7BaeVjye/xRc+7sM/V8=
+Endpoint = 172.16.16.16:51820
+AllowedIPs = 192.168.1.1
+
+### Gateway A manual config:
+
+[Interface]
+Address = 192.168.1.1
+PrivateKey = MOHCg5N3CUOm0pDfDZZuLiAvFUIzihHpWrzh1sPssGI=
+ListenPort = 51820
+
+[Peer]
+PublicKey = 73wiK2B5NyjaTvPi5kXTLfzbL55LYkzMw+yscaBsET4=
+Endpoint = 172.48.48.51:51820
+AllowedIPs = 192.168.1.2
+
+
+
