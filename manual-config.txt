@@ -24,4 +24,29 @@ Endpoint = 172.48.48.51:51820
 AllowedIPs = 192.168.1.2
 
 
+### CONFIG WORKING WITH NAT :
 
+### SERVER s1:
+
+[Interface]
+PrivateKey = MH4T73ZQ3qpmq6ELb0DuU6gJkjOyTNe8Vw81B81ap0U=
+Address = 192.168.1.2
+ListenPort = 52345
+
+[Peer]
+PublicKey = c7Z0yJX25Tw8gU42UQY0GCm2BdMEyrG16lzNvdqSmXg=
+AllowedIPs = 192.168.1.1
+Endpoint = 10.1.0.2:52345
+
+
+### CLIENT a1:
+
+[Interface]
+PrivateKey = AJZmgozfoNBjZhVwuLRtCcZOgUsa/aITsGMAKbhZ0EM=
+Address = 192.168.1.1
+ListenPort = 52345
+
+[Peer]
+PublicKey = U7W01kHD1f34A7j+XT6X0XnQaQVHUSlOdCEnSIJx6GE=
+AllowedIPs = 192.168.1.2
+Endpoint = 172.30.30.30:52345
