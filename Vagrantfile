@@ -136,6 +136,12 @@ Vagrant.configure("2") do |config|
       destination: "client_app"
     # Install dependencies and define the NAT
     client_a1.vm.provision :shell, run: "always", path: "scripts/client.sh"
+    client_a1.vm.provision :file, source: './apps/wireguard',
+    destination: "wireguard"
+    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2"
+    client_a1.trigger.before :destroy do |trigger|
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+    end
   end
 
   # Client A2
@@ -350,6 +356,12 @@ Vagrant.configure("2") do |config|
       destination: "server_app"
     # Install dependencies and define the NAT
     server_s1.vm.provision :shell, run: "always", path: "scripts/cloud_server.sh"
+    server_s1.vm.provision :file, source: './apps/wireguard',
+    destination: "wireguard"
+    server_s1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py server-s1 c94B0EE671eC0f5BC637a9FCC3eD5A99 172.30.30.30"
+    server_s1.trigger.before :destroy do |trigger|
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+    end
   end
 
   # Cloud server S2
