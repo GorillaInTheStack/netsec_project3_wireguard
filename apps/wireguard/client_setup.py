@@ -21,8 +21,8 @@ os.system("wg genkey | sudo tee -a /etc/wireguard/privatekey | wg pubkey | sudo 
 proc = subprocess.Popen("sudo cat /etc/wireguard/publickey", shell=True,stdout=subprocess.PIPE)
 publickey = proc.stdout.read().decode("ascii").strip()
 proc = subprocess.Popen("sudo cat /etc/wireguard/privatekey", shell=True,stdout=subprocess.PIPE)
-privatekey = proc.stdout.read().decode("ascii")
-listenPort = 51820
+privatekey = proc.stdout.read().decode("ascii").strip()
+listenPort = 52345
 
 # Post Method is invoked if data != None
 def sendRequest(url, data):
@@ -88,8 +88,15 @@ response = sendRequest("http://meshmash.vikaa.fi:49341/overlays/"+clientSite+"/d
 tunnelIP = response["tunnel_ip"]
 
 os.system("sudo apt-get -y install python3-pip &&  pip3 install timeloop")
+interface = "[Interface]\nPrivateKey = "+privatekey + "\nListenPort = "+str(listenPort)+"\n\n"
+f = open("wg0.conf", "w")
+f.write(interface)
+f.close()
+os.system("sudo mv wg0.conf /etc/wireguard/wg0.conf")
+os.system("sudo systemctl start wg-quick@wg0")
+os.system("sudo ifconfig wg0 "+tunnelIP)
 args = privatekey.strip()+" "+ tunnelIP +" "+str(listenPort) +" "+clientSite
-os.system("python3 /home/vagrant/wireguard/client_scheduler.py "+ args +" &")
+os.system("nohup python3 /home/vagrant/wireguard/client_scheduler.py "+ args +" &")
 print("wohooo")
 
 

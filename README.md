@@ -8,7 +8,7 @@ This project contains a testbed network setup for _Vagrant_ and _VirtualBox_. Th
 
 ## Network Overview
 
-![Network Setup](./img/setup.png)
+![Network Setup](./img/setup_old.png)
 
 The testbed is initially configured so that the clients (IoT devices) in each customer’s network access a local server. Your goal is to relocate the server functionality from the customers’ local networks to a cloud platform, which is represented by the network on the right-hand side. The Router in the above topology represents routing across the Internet between the customer sites and the cloud. The project will mostly require configuring VPN connections and firewall rules on the gateway routers. See the project instructions provided in the course.
 

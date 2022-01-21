@@ -138,7 +138,7 @@ Vagrant.configure("2") do |config|
     client_a1.vm.provision :shell, run: "always", path: "scripts/client.sh"
     client_a1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2"
+    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2", privileged: false
     client_a1.trigger.before :destroy do |trigger|
       trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
     end
@@ -170,6 +170,12 @@ Vagrant.configure("2") do |config|
       destination: "client_app"
     # Install dependencies and define the NAT
     client_a2.vm.provision :shell, run: "always", path: "scripts/client.sh"
+    client_a2.vm.provision :file, source: './apps/wireguard',
+    destination: "wireguard"
+    client_a2.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a2 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.3"
+    client_a2.trigger.before :destroy do |trigger|
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+    end
   end
 
   #######################
@@ -313,7 +319,7 @@ Vagrant.configure("2") do |config|
       virtualbox__intnet: "isp_link_s"
     # Interface towards cloud network
     gateway_s.vm.network "private_network",
-      ip: "10.0.0.1",
+      ip: "172.48.48.49",
       netmask: "255.255.255.0",
       virtualbox__intnet: "cloud_network_s"
     gateway_s.vm.provider "virtualbox" do |vb|
@@ -338,7 +344,7 @@ Vagrant.configure("2") do |config|
     ## NETWORK INTERFACES
     # Interface towards cloud network
     server_s1.vm.network "private_network",
-      ip: "10.0.0.2",
+      ip: "172.48.48.51",
       netmask: "255.255.255.0",
       virtualbox__intnet: "cloud_network_s"
     server_s1.vm.provider "virtualbox" do |vb|
@@ -358,7 +364,7 @@ Vagrant.configure("2") do |config|
     server_s1.vm.provision :shell, run: "always", path: "scripts/cloud_server.sh"
     server_s1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    server_s1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py server-s1 c94B0EE671eC0f5BC637a9FCC3eD5A99 172.30.30.30"
+    server_s1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py server-s1 c94B0EE671eC0f5BC637a9FCC3eD5A99 172.48.48.51"
     server_s1.trigger.before :destroy do |trigger|
       trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
     end
@@ -372,7 +378,7 @@ Vagrant.configure("2") do |config|
     ## NETWORK INTERFACES
     # Interface towards cloud network
     server_s2.vm.network "private_network",
-      ip: "10.0.0.3",
+      ip: "172.48.48.52",
       netmask: "255.255.255.0",
       virtualbox__intnet: "cloud_network_s"
     server_s2.vm.provider "virtualbox" do |vb|
