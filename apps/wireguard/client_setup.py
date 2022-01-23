@@ -87,16 +87,28 @@ if(clientSite == ""):
 response = sendRequest("http://meshmash.vikaa.fi:49341/overlays/"+clientSite+"/devices", {"device_id": deviceID})
 tunnelIP = response["tunnel_ip"]
 
-os.system("sudo apt-get -y install python3-pip &&  pip3 install timeloop")
-interface = "[Interface]\nPrivateKey = "+privatekey + "\nListenPort = "+str(listenPort)+"\n\n"
+# os.system("sudo apt-get -y install python3-pip &&  pip3 install timeloop")
+# os.system("sudo apt-get -y install python3-pip &&  pip3 install python-crontab")
+interface = "[Interface]\nPrivateKey = "+privatekey +"\nAddress = "+tunnelIP + "\nListenPort = "+str(listenPort)+"\n\n"
+#+"\nAddress = "+tunnelIP
 f = open("wg0.conf", "w")
 f.write(interface)
 f.close()
 os.system("sudo mv wg0.conf /etc/wireguard/wg0.conf")
-os.system("sudo systemctl start wg-quick@wg0")
-os.system("sudo ifconfig wg0 "+tunnelIP)
-args = privatekey.strip()+" "+ tunnelIP +" "+str(listenPort) +" "+clientSite
-os.system("nohup python3 /home/vagrant/wireguard/client_scheduler.py "+ args +" &")
+os.system("sudo wg-quick up wg0")
+# os.system("systemctl enable wg-quick@wg0")
+# os.system("sudo systemctl start wg-quick@wg0")
+# os.system("sudo ifconfig wg0 "+tunnelIP)
+args =  tunnelIP +" "+str(listenPort) +" "+clientSite
+from crontab import CronTab
+
+cron = CronTab(user='vagrant')
+job = cron.new(command="python3 /home/vagrant/wireguard/generate_conf.py "+ args)
+job.minute.every(1)
+job2 = cron.new(command="python3 /home/vagrant/wireguard/refresh_token.py")
+job2.minute.every(15)
+cron.write()
+
 print("wohooo")
 
 

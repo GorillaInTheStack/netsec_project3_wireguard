@@ -7,6 +7,8 @@ ENV["LC_ALL"] = "en_US.UTF-8"
 # VirtualBox networking: https://www.virtualbox.org/manual/ch06.html
 # modifyvm command: https://www.virtualbox.org/manual/ch08.html#vboxmanage-modifyvm
 
+api_key = "c94B0EE671eC0f5BC637a9FCC3eD5A99"
+
 Vagrant.configure("2") do |config|
 
   #######################
@@ -135,10 +137,11 @@ Vagrant.configure("2") do |config|
     client_a1.vm.provision :file, source: './apps/client_app',
       destination: "client_app"
     # Install dependencies and define the NAT
+    client_a1.vm.provision :shell,run: "always",inline: "sudo apt-get -y install python3-pip &&  pip3 install python-crontab"
     client_a1.vm.provision :shell, run: "always", path: "scripts/client.sh"
     client_a1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2", privileged: false
+    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2"
     client_a1.trigger.before :destroy do |trigger|
       trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
     end
@@ -361,6 +364,7 @@ Vagrant.configure("2") do |config|
     server_s1.vm.provision :file, source: './apps/server_app',
       destination: "server_app"
     # Install dependencies and define the NAT
+    server_s1.vm.provision :shell,run: "always",inline: "sudo apt-get -y install python3-pip &&  pip3 install python-crontab"
     server_s1.vm.provision :shell, run: "always", path: "scripts/cloud_server.sh"
     server_s1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
