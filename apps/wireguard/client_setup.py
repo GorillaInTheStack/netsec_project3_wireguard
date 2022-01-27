@@ -51,7 +51,7 @@ response = sendRequest("http://meshmash.vikaa.fi:49341/devices", data)
 deviceID = response["device_id"] 
 deviceToken = response['token']
 
-# saving id and token to be used in other scripts easily
+# saving id and token to be used in cron jobs easily
 f = open("deviceID", "w")
 f.write(deviceID)
 f.close()
@@ -64,7 +64,6 @@ req = request.Request("http://meshmash.vikaa.fi:49341/overlays", headers={'Conte
 response = request.urlopen(req)
 overlays = json.loads(response.read())['overlays']
 clientSite = ""
-# serverOverlay = ""
 for overlayID in overlays:
     req = request.Request("http://meshmash.vikaa.fi:49341/overlays/"+overlayID
     , headers={'Content-Type': 'application/json','x-api-key': apikey})
@@ -74,10 +73,7 @@ for overlayID in overlays:
         clientSite = overlayID
     elif(('client-b' in clientName or "server-s2" in clientName) and current_overlay == 'siteB'):
         clientSite = overlayID
-    # if('client-a' in clientName and current_overlay == 'server1'):
-    #     serverOverlay = overlayID
-    # elif('client-b' in clientName and current_overlay == 'server2'):
-    #     serverOverlay = overlayID
+
 
 if(clientSite == ""):
     print("no overlay detected for this device")
@@ -87,10 +83,9 @@ if(clientSite == ""):
 response = sendRequest("http://meshmash.vikaa.fi:49341/overlays/"+clientSite+"/devices", {"device_id": deviceID})
 tunnelIP = response["tunnel_ip"]
 
-# os.system("sudo apt-get -y install python3-pip &&  pip3 install timeloop")
-# os.system("sudo apt-get -y install python3-pip &&  pip3 install python-crontab")
+
+# initial conf file state
 interface = "[Interface]\nPrivateKey = "+privatekey +"\nAddress = "+tunnelIP + "\nListenPort = "+str(listenPort)+"\n\n"
-#+"\nAddress = "+tunnelIP
 f = open("wg0.conf", "w")
 f.write(interface)
 f.close()
@@ -99,11 +94,15 @@ os.system("sudo wg-quick up wg0")
 # os.system("systemctl enable wg-quick@wg0")
 # os.system("sudo systemctl start wg-quick@wg0")
 # os.system("sudo ifconfig wg0 "+tunnelIP)
-args =  tunnelIP +" "+str(listenPort) +" "+clientSite
-from crontab import CronTab
+args =  tunnelIP +"\n"+str(listenPort) +"\n"+clientSite+"\n"
+f = open("args", "w")
+f.write(args)
+f.close()
 
+# starting cron jobs
+from crontab import CronTab
 cron = CronTab(user='vagrant')
-job = cron.new(command="python3 /home/vagrant/wireguard/generate_conf.py "+ args)
+job = cron.new(command="python3 /home/vagrant/wireguard/generate_conf.py")
 job.minute.every(1)
 job2 = cron.new(command="python3 /home/vagrant/wireguard/refresh_token.py")
 job2.minute.every(15)

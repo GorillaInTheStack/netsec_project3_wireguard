@@ -141,9 +141,9 @@ Vagrant.configure("2") do |config|
     client_a1.vm.provision :shell, run: "always", path: "scripts/client.sh"
     client_a1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.2"
+    client_a1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a1 #{api_key} 10.1.0.2"
     client_a1.trigger.before :destroy do |trigger|
-      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py #{api_key}"} 
     end
   end
 
@@ -172,12 +172,13 @@ Vagrant.configure("2") do |config|
     client_a2.vm.provision :file, source: './apps/client_app',
       destination: "client_app"
     # Install dependencies and define the NAT
+    client_a2.vm.provision :shell,run: "always",inline: "sudo apt-get -y install python3-pip &&  pip3 install python-crontab"
     client_a2.vm.provision :shell, run: "always", path: "scripts/client.sh"
     client_a2.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    client_a2.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a2 c94B0EE671eC0f5BC637a9FCC3eD5A99 10.1.0.3"
+    client_a2.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py client-a2 #{api_key} 10.1.0.3"
     client_a2.trigger.before :destroy do |trigger|
-      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py #{api_key}"} 
     end
   end
 
@@ -368,9 +369,9 @@ Vagrant.configure("2") do |config|
     server_s1.vm.provision :shell, run: "always", path: "scripts/cloud_server.sh"
     server_s1.vm.provision :file, source: './apps/wireguard',
     destination: "wireguard"
-    server_s1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py server-s1 c94B0EE671eC0f5BC637a9FCC3eD5A99 172.48.48.51"
+    server_s1.vm.provision :shell, run: "always", :inline => "python3 /home/vagrant/wireguard/client_setup.py server-s1 #{api_key} 172.48.48.51"
     server_s1.trigger.before :destroy do |trigger|
-      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py c94B0EE671eC0f5BC637a9FCC3eD5A99"} 
+      trigger.run_remote = {inline: "python3 /home/vagrant/wireguard/destroy_client.py #{api_key}"} 
     end
   end
 
