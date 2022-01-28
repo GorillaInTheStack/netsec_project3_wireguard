@@ -6,9 +6,9 @@ import subprocess
 from os.path import exists
 
 
-if(not exists("/home/vagrant/args")):
+if(not exists("/home/vagrant/wireguard/args")):
     exit(1)
-args_file = open('/home/vagrant/args', 'r')
+args_file = open('/home/vagrant/wireguard/args', 'r')
 args = args_file.readlines()
 if(len(args) < 3):
     exit(1)
@@ -17,7 +17,7 @@ listenPort = args[1].strip()
 clientSite = args[2].strip()
 
 
-f = open("/home/vagrant/deviceID")
+f = open("/home/vagrant/wireguard/deviceID")
 deviceID = f.readline().rstrip()
 proc = subprocess.Popen("sudo cat /etc/wireguard/privatekey", shell=True,stdout=subprocess.PIPE)
 privatekey = proc.stdout.read().decode("ascii").strip()
@@ -26,7 +26,7 @@ interface = "[Interface]\nPrivateKey = "+privatekey  + "\nAddress = "+tunnelIP +
 
 
 # request conf file    
-f = open("/home/vagrant/deviceToken")
+f = open("/home/vagrant/wireguard/deviceToken")
 deviceToken = f.readline().rstrip()
 req = request.Request("http://meshmash.vikaa.fi:49341/overlays/"+clientSite+"/devices/"+deviceID +"/wgconfig"
 , headers={'Content-Type': 'application/json','Authorization': 'Bearer '+deviceToken})

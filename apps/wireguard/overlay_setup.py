@@ -1,12 +1,3 @@
-# import urllib
-# import json
-
-# data = urllib.parse.urlencode({"overlay_name": "siteA"})
-# data = data.encode('utf-8')
-# url = "http://meshmash.vikaa.fi:49338/overlays"
-# response = urllib.request.urlopen(url, data)
-# print(json.loads(response.data))
-
 from urllib import request
 import json
 # Post Method is invoked if data != None

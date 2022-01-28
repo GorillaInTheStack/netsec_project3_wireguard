@@ -4,7 +4,7 @@ import os
 from urllib import request
 import json
 
-if(len(sys.argv) != 4): # expects client name (client-ax / client-bx), api-key, public ip?
+if(len(sys.argv) != 4): # expects client name (client-ax / client-bx / server-s1 / server-s2), api-key, public ip
     print("missing arguments")
     exit(1)
 
@@ -52,10 +52,10 @@ deviceID = response["device_id"]
 deviceToken = response['token']
 
 # saving id and token to be used in cron jobs easily
-f = open("deviceID", "w")
+f = open("/home/vagrant/wireguard/deviceID", "w")
 f.write(deviceID)
 f.close()
-f = open("deviceToken", "w")
+f = open("/home/vagrant/wireguard/deviceToken", "w")
 f.write(deviceToken)
 f.close()
 
@@ -95,7 +95,7 @@ os.system("sudo wg-quick up wg0")
 # os.system("sudo systemctl start wg-quick@wg0")
 # os.system("sudo ifconfig wg0 "+tunnelIP)
 args =  tunnelIP +"\n"+str(listenPort) +"\n"+clientSite+"\n"
-f = open("args", "w")
+f = open("/home/vagrant/wireguard/args", "w")
 f.write(args)
 f.close()
 
@@ -104,7 +104,7 @@ from crontab import CronTab
 cron = CronTab(user='vagrant')
 job = cron.new(command="python3 /home/vagrant/wireguard/generate_conf.py")
 job.minute.every(1)
-job2 = cron.new(command="python3 /home/vagrant/wireguard/refresh_token.py")
+job2 = cron.new(command="sudo python3 /home/vagrant/wireguard/refresh_token.py")
 job2.minute.every(15)
 cron.write()
 
